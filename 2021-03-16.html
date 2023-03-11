@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>3-16-2021</title>
+  </head>
+  <body>
+    <h1>Art of Exploitation: Buffer Overflows</h1>
+    <img src="pics/buffer.jpg">
+    <p>The main project I have been working on since since graduating school a month ago is working through the fantastic book “Hacking: The Art of Exploitation” by Jon Erickson. I finished the programming section which is a great overview/review of C alongside some x86 Assembly basics. The main issue I have with the book is the Live CD that comes with it, it is a very old version of Ubuntu that can be either booted into from the bios or can run the iso inside a virtual machine. I much prefer to actually do the coding and testing on my own Linux machine. But before I explain that, I will explain how I got it to run as a virtual machine, since it seems many people have issues with it. 
+      <h2>Virtualization</h2>
+    <p>First you want to rip the iso from the CD, on my Ubuntu machine it is quite simple using dd. This can be also be done on windows, but will have to find some 3rd party software to rip the CD. Just put the CD in your computer, and run this command:</p>
+    <p style="color:Green">
+      sudo dd if=/dev/cdrom of=/home/$USER/hack.iso
+    </p>
+    <p>There should now be a new file named: <i>hack.iso</i>, in your home directory. From here it is now a simple process of creating a virtual machine in Virtual Box using the iso file. You can also run this using qemu, but I am not too familiar qemu and it seemed quite slow and Virtual Box was far easier. To launch in qemu I used this command:<br>
+    </p>
+    <p style="color:Green">
+      qemu-system-i386 -m 256 -cdrom hack.iso -boot d
+    </p>
+    <p style="color:Grey"><i>
+        <u>Note</u>: if this is too complicated for you, then I would say this book will be far too difficult for you. I am not saying this to be an elitist or as a way of gate keeping, I am saying this from experience. I attempted this book when I had only been programming and using Linux for a few months and was way in over my head. Only after programming for a few years and getting more comfortable in Linux, did this book finally become approachable and understandable to me.</i></p>
+    <h2>Native</h2>
+    <p>The above works, but it isn’t the most pleasant experience. Luckily the author has uploaded the source code used in the book so you can use any Linux workstation to do the exercises in the book. To download the official source code, I just use this curl command:<br>
+    </p>
+    <p style="color:Green">
+      curl -LO https://nostarch.com/download/booksrc.zip && unzip booksrc.zip && rm booksrc.zip
+    </p>
+    <p>The main issue with working through the book using this method, is that modern day compilers and computers are optimized to be far more secure and a lot of the attacks in the book don’t work the same way. As of writing this post, I just finished the Buffer Overflow section in the book and was able to get most of them working by disabling certain security measures. I think this goes without saying, only use do this when testing this code, revert things back to normal after you are done. First thing that needs to be done is to disable ASLR (Address Space Layout Randomization), simply it is file containing a 0, 1, or 2. They each mean:<br><br>
+      <i>
+        0 = Disabled<br>
+        1 = Conservative Randomization<br>
+        2 = Full Randomization<br>
+      </i>
+      So we just have to change it to 0. To see the value currently set, run:<br>
+    </p>
+    <p style="color:Green">
+      cat /proc/sys/kernel/randomize_va_space
+    </p>
+    <p>Do disable ASLR, run:<br></p>
+    <p style="color:Green">
+      echo 0 | sudo tee /proc/sys/kernel/randomize_va_space
+    </p>
+    <p>To re-enable it (always do this when done) run:<br></p>
+    <p style="color:Green">
+      echo 2 | sudo tee /proc/sys/kernel/randomize_va_space
+    </p>
+    <p>Next we need to set certain flags when compiling with gcc. We need everything to compile to 32bit, most likely you are working on a 64 bit machine as that is today’s standard, but this book was written when 32 bit machines where the standard. This can be set using the “-m32” flag. Next we want to make sure that it can be debugged with gdb and the assembly is nice to read, so we use the flags: “ -g -masm=intel”. And finally we want to do our best ignoring/bypassing the ***stack mashing detected*** warnings, so we use various flags to help avoid this. I created a simple shell script that does this automatically called vc (short for Vulnerable Compiler). Here is the script:
+    </p>
+    <p style="color:Green">
+      #!/usr/bin/sh<br>
+      
+      gcc -m32 -g -masm=intel -fno-asynchronous-unwind-tables \<br>
+	  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-z execstack -fno-delete-null-pointer-checks \<br>
+	  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-fno-exceptions -fno-stack-protector "$1"<br>
+	</p>
+	<p>
+	  Just make the script executable, and can very easily compile the code with all of the flags set:
+	</p>
+	<p style="color:Green">
+      chmod +x vc<br>
+      ./vc program.c<br>
+      ./a.out<br>
+    </p>
+    <p>o does this work with the buffer overflows in the book? Yes, but not 100% the same. The examples in the book require the user to overflow the program by inputting 30 ‘A’ characters, but this just causes a segmentation fault. The programs: auth_overflow.c and auth_overflow2.c, both expect 16 characters, and I found that anything 17-23 characters long works. This is what I mean:
+    </p>
+    <p style="color:Green">
+      $ ./a.out AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA<br>
+    </p>
+    <p style="color:Red">
+      Segmentation fault (core dumped)<br>
+    </p>
+    <p style="color:Green">
+      $ ./a.out AAAAAAAAAAAAAAAAAAAA<br>
+    </p>
+    <p style="color:Violet">
+      -=-=-=-=-=-=-=-=-=-=-=-=-=-<br>
+      Access Granted.<br>
+      -=-=-=-=-=-=-=-=-=-=-=-=-=-<br>
+    </p>
+    <p>So this works for the buffer overflows I have attempted so far, I am not sure if there are more in the book as I am reading it front to back. This did not work with exploit_notesearch.c so it is a hit or a miss, but I find doing things this way helps me get more accustomed to exploitation of modern day machines, as the concepts are still there. Even if this book is old, the attacks will always be relevant in computers. Hope this helps someone out there, cheers.<br><br>
+      Thanks to: <a href="https://williams-cs.github.io/cs331-f19-www/assets/labs/lab3/stack_smashing.html">https://williams-cs.github.io/cs331-f19-www/assets/labs/lab3/stack_smashing.html</a>
+      <hr>
+      <a href="index.html">Home</a>
+  </body>
+</html>
+

@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Fixing 100% disk usage on Windows 10</title>
+  </head>
+  <body>
+    <h1>Fixing 100% disk usage on Windows 10</h1>
+    <img src="pics/100_disk.png">
+    <p>Happy Pi Day everyone! So, a friend of mine was having a strange issue on her Windows 10 PC in which the disk usage was constantly running at 100% usage. My first thought was maybe it was old and needed as OS reinstall, but she just had gotten the computer and it was barely used. I decided to run <a href="https://crystalmark.info/en/software/crystaldiskinfo/">CrystalDiskInfo</a> and the hard drive hadn’t even been used 300 hours yet and everything reported fine, so something else was going. Then I proceeded to basic checks: I ran antivirus, updated windows, removed temp files, disabled apps from running and startup, and removed unwanted applications. Still 100% usage, hmm….<br><br>
+      Next up was trying to run some CMD programs for checking the system:<br>
+    <p style="color:Green">
+      <i>sfc /scannow & DISM.exe /Online /Cleanup-image /Scanhealth && DISM.exe /Online /Cleanup-image /Restorehealth & sfc /scannow & chkdsk C: /f /r /x</i>
+      <br>
+    </p>
+    <p>Just like everyone else does, I went to search engines to find a solution. I found several places that claimed to fix the problem, but of course no dice. I came across tons of posts basically just telling me to change one little windows option, didn’t do anything. Lot’s of other places just said get an SSD to fix the problem, even if that is true it's quite pathetic that the OS is having this much of a bottleneck with a modern HDD. I was finally able to start finding some light at the end of the tunnel, using Resource Monitor I was able to track down which services and apps were hogging the disk. Disabled them and performance was better, but still would constantly spike up and down. I was able to find to helpful articles that guided me to windows services that were causing the issues:
+      <ul>
+        <li><a href="https://thegeekpage.com/100-disk-usage-on-windows-10/">https://thegeekpage.com/100-disk-usage-on-windows-10/</a>
+        <li><a href="https://wintechlab.com/svchost-high-cpu-usage-windows-10/">https://wintechlab.com/svchost-high-cpu-usage-windows-10/</a>
+      </ul>
+    <p>Based on the above links, I was able to single out these services and disable them:
+      <ul>
+        <li>superfetch
+        <li>Windows Search
+        <li>DiagTrack
+        <li>wuauserv
+        <li>BITS
+      </ul>
+    <p>Finally! The disk usage dropped to 0%, and I let the computer run for a while to make it lasted. Everything seemed good so I restarted the system. After the system rebooted I opened task manager, and of course, the disk usage was back to 100%. I figured maybe it just needs a minute to drop, but it never went down. Looked at the services and most of them were started again even changing the startup type to disabled in services.msc. So I proceeded to slam my head against the wall for the next few days until a light bulb went of in my head.<br><br>
+	  I had the revelation of forcing the services to stop once the machine is turned, and I used something I haven’t messed with since the Windows XP days, the user’s startup folder. Quickly I whipped up a simple batch script to disable all of those services and placed it in the folder, and rebooted. Didn’t work, but luckily I realized my error pretty quickly. Since it is running from the use’s folder, it is running with the users permissions so I had to force it to run as Admin. Another quick online search and found this link which very easily explains how to create a shortcut and force it to run as admin: <a href="https://www.cnet.com/how-to/always-run-a-program-in-administrator-mode-in-windows-10/">https://www.cnet.com/how-to/always-run-a-program-in-administrator-mode-in-windows-10/</a><br><br>
+	  So I placed the script in the root of the C:\ drive, and created this shortcut to it inside of the user’s startup folder, and miraculously it worked flawlessly every reboot. I did this several weeks ago and the laptop is working flawlessly, it was a rather hacky solution but it worked completely. Here is the script I created:</p>
+	<p style="color:Green">
+    @ECHO OFF<br>
+    net.exe stop superfetch<br>
+    sc config superfetch start=disabled<br>
+    net.exe stop "Windows search"<br>
+    sc config "WSearch" start=disabled<br>
+    sc stop "WSearch"<br>
+    net.exe stop "DiagTrack"<br>
+    sc config "DiagTrack" start=disabled<br>
+    sc stop "DiagTrack"<br>
+    net.exe stop "wuauserv"<br>
+    sc config "wuauserv" start=disabled<br>
+    sc stop "wuauserv"<br>
+    net.exe stop "BITS"<br>
+    sc config "BITS" start=disabled<br>
+    sc stop "BITS"<br>
+    </p>
+    <h2>TL;DR</h2>
+    <ol>
+      <li>Place above script at C:\100_disk.bat
+      <li>Create a shortcut to it and force it to run as Admin: <a href="https://www.cnet.com/how-to/always-run-a-program-in-administrator-mode-in-windows-10/">tutorial here</a>
+      <li>Place shortcut is user’s shell:startup folder
+      <li>Reboot and 100% disk should be fixed
+    </ol>
+    <hr>
+    <a href="index.html">Home</a>
+  </body>
+</html>

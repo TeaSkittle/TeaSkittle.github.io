@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Racket Startup Scripts on Windows</title>
+  </head>
+  <body>
+    <h1>Racket Startup Scripts on Windows</h1>
+    <p>Hello everyone! Wanted to make simple little post here that you may find useful. Most of what I use on a daily basis at work is cloud based in an internal network. Usually I start my day of by loading a web browser, opening several tabs, an email client and a terminal. In the past I have automated this using a simple .bat file, but I really love <a href="https://racket-lang.org/">Racket</a> and wanted to something similar within Racket. As it turns out, it is quite simple to do this. <br>
+    <br>
+    Doing this in a batch file is quite simple, all you really need is the START and TIMEOUT commands. Here is a simple example:
+    </p>
+    <p style="color:Green">
+      START https://www.google.com <br>
+      TIMEOUT /t 5 <br>
+      START https://www.youtube.com <br>
+      TIMEOUT /t 5 <br>
+      START thunderbird <br>
+      :: and so on<br>
+    </p>
+    <p>
+      To do the same thing on Racket, it is quite similar. Here is my startup script(with URL's changed here): <br>
+    </p>
+    <p style="color:Green">
+      #lang racket/base <br>
+      (require net/sendurl) <br>
+      (require racket/system) <br>
+      (require racket/gui/base) <br>
+      <br>
+      ; URL List <br>
+      (define url-list '("https://www.youtube.com/user/TheCaptBubbles/playlists" <br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"https://calixcloud.calix.com/login")) <br>
+      <br>
+      ; List of Apps <br>
+      (define app-list '("start wt" <br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"start thunderbird")) <br>
+      <br>
+      ; Open URLs in default browser <br>
+      (for ([i url-list]) <br>
+      &nbsp;&nbsp;&nbsp;&nbsp;(send-url i) <br>
+      &nbsp;&nbsp;&nbsp;&nbsp;(sleep/yield 2)) <br>
+      <br>
+      ; Open Apps <br>
+      (for ([i app-list]) <br>
+      &nbsp;&nbsp;&nbsp;&nbsp;(system i) <br>
+      &nbsp;&nbsp;&nbsp;&nbsp;(sleep/yield 2)) <br>
+    </p>
+    <p>To make this work you need to import:
+      <ul>
+        <li>net/sendurl - This opens a webpage in your system's default web browser
+        <li>racket/system - This is to open other apps using START
+        <li>racket/gui/base - This is for sleep/yeild to delay opening everything at once
+      </ul>
+    <p>
+    Then all I did was create a list for URLs and a list for apps and loop through opening them. <br><br>
+    And that is really it! All you need to do is either run this manually when you start your machine, or create a shortcut and make that executable and place it in your shell:startup folder. Placing the shrotcut there will run this script at startup. I personally just keep it as a shortcut on my dekstop and run it when I arrive to work. Hope you found this helpful!
+    <hr>
+    <a href="index.html">Home</a>
+  </body>
+</html>
