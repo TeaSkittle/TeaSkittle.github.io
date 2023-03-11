@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>chess</title>
+  </head>
+  <body>
+    <h1 id="overview">Overview</h1>
+    <p>What is Situational Chess? Situational Chess(SitChess for short), is a chess variant focused on the endgame of chess. I used to compete in chess when I was younger(8-11 years old or so) and have been playing for as long as I can remember. The one thing that I always hated about chess is the heavy focus on the opening &amp; middle parts of the game, and I always felt that the endgame is the most fun part. So I wanted to create a variant of chess that essentially allows you to skip to the end game, with both players having an equal army. When I came up with this idea I was playing a lot of: <a href="http://www.frozensynapse.com/">Frozen Synapse</a>. In that game you play as small squad in a unique simultaneous/turn-based hybrid. Here is a simple screenshot to give you an idea of the game:
+      <br>
+      <img src="pics/frozen.png"/>
+    <p>There is a style of play in the game where both the map and armies are randomly generated, but it is done so in a balanced fashion. So I took that principle and applied it to chess!
+      <h1 id="starting-army">Starting Army</h1>
+    <p>Each player chooses any combination of pieces that total up to 12 points in piece material. For those who are unaware of piece value, here is each piece with its value:
+      <ul>
+        <li>Queen = 9 points
+        <li>Rook = 5 point
+        <li>Bishop = 3 points
+        <li>Knight = 3 points
+        <li>Pawn = 1 point
+        <li>King = 0 Points
+          <ul>
+            <li>And no that doesn’t mean you can have an infinite number of Kings because: <br>0 * N = 0<br> Nice try, every player has only one King.
+          </ul>
+        </li>
+      </ul>
+      <blockquote>
+        <em>Note: I am aware that depending on who you ask that several players debate piece values and if they should be even considered in chess. I am ignoring that here as I needed some basic way to ensure both players have “equal” armies at the start of the game.</em>
+      </blockquote>
+    <p>Example armies to choose:
+      <ul>
+        <li>1 Queen, and 1 Knight
+        <li>2 Rooks, and 2 pawns
+        <li>7 Pawns, and 1 Rook
+        <li>1 Rook, 1 Bishop, 1 Knight, and 1 Pawn
+        <li>etc..
+      </ul>
+    <p>The reason for 12 is to avoid players being to dependent on choosing a queen or two rooks. If for example 15 was the army value, we would have too many armies like:
+      <ul>
+        <li>2 Rooks, 1 Bishop, and 1 Pawn
+        <li>1 Queen, 1 Rook, 1 Pawn
+        <li>5 Pawns, 2 Rooks
+      </ul>
+      <blockquote>
+        <em>Note: If you want to create an artificial handicap for a large skill gap between the two players, the better player can only use less points (11 for example).</em>
+      </blockquote>
+      <h1 id="piece-placement">Piece Placement</h1>
+    <p>At the start of the game each player takes turns placing one piece where they want as long as they do not go against these following rules:
+      <ol>
+        <li>Each piece may not be placed attacking an enemy piece
+          <ul>
+            <li>The reverse also applies, you cannot place your own piece in an attacked position
+          </ul>
+        </li>
+        <li>Pawns must be placed at least two squares from the opposite side of the board
+          <ul>
+            <li>In other words white cannot place pawns on the ranks 7/8, and black cannot place them on ranks 1/2
+            <li>This is to avoid a pawn promotion on turn 1
+          </ul>
+        </li>
+        <li>Black places their pieces first, since white has first move advantage
+      </ol>
+      An example starting position:
+      <br>
+      <img src="pics/start.png"/>
+      <h1 id="misc-rules">Misc Rules</h1>
+    <p>Moves you see only in the opening game are not allowed. Since we are starting in the endgame, we assume that these moves would have happened earlier on in the game. The moves which are not allowed are:</p>
+    <ol>
+      <li>Castling</li>
+      <li>En Passant</li>
+    </ol>
+    <h1 id="using-dice">Using Dice</h1>
+    <p>If you want, you can add an element of randomness to the game by using a six-sided dice to select your army. Essentially keep rolling until your army is totaled to 12 points, a good way to spice up the game. Here are the dice-to-piece conversions:
+      <ul>
+        <li>6 = Your choice of piece
+        <li>5 = Queen
+        <li>4 = Rook
+        <li>3 = Knight
+        <li>2 = Bishop
+        <li>1 = Pawn
+      </ul>
+      <h1 id="now-play-some-chess">Now play some Chess!</h1>
+    <p>Seriously, from here just play chess as normal. This is a great way to learn endgame principles, practice tactics, and just overall have a fun way to mix up your chess playing. Enjoy!
+    <hr>
+    <a href="index.html">Home</a>
+  </body>
+</html>
