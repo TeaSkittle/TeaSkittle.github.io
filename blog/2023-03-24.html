@@ -19,22 +19,22 @@
       <blockquote>
       <code>
 (define (time-to-minutes hours minutes)<br>
-  (+ (* 60 hours) minutes))<br>
+&nbsp; &nbsp;(+ (* 60 hours) minutes))<br>
 <br>
 (define (second-items lst)<br>
-  (map cadr lst))<br>
+&nbsp; &nbsp;(map cadr lst))<br>
 <br>
 (define (first-items lst)<br>
-  (map car lst))<br>
-
+&nbsp; &nbsp;(map car lst))<br>
+<br>
 (define (hours-to-minutes hours)<br>
   &nbsp; &nbsp;(* (apply + (first-items hours)) 60))<br>
 <br>
 (define (total-minutes minutes)<br>
-  &nbsp; &nbsp;(apply + (second-items minutes)))<br>
+&nbsp; &nbsp;(apply + (second-items minutes)))<br>
 <br>
 (define (total-time lst)<br>
-  &nbsp; &nbsp;(/ (+ (hours-to-minutes lst)(total-minutes lst)) 60.0))<br>
+&nbsp; &nbsp;(/ (+ (hours-to-minutes lst)(total-minutes lst)) 60.0))<br>
 <br>
 (display "Total Hours: ")<br>
 <br>
