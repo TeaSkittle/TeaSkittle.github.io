@@ -18,20 +18,11 @@
       Now evertime you load the REPL via <code>csi</code> you will have readline ability. Sweet! Now that chicken is set up, I went a head and followed <a href="https://spritely.institute/static/papers/scheme-primer.html">this tutorial</a>, which did not take me that long. After this, I  was ready to attack the problem. Now I won't go into all the difficulites I had with this script, but it did take me a few hours to get it working fully. Mainly because writing things in scheme is quite the mental exercise, defintely a challenge but a fun and rewarding one! The one thing I was not able to implemenmt was getting clean input for the time from the user, so for now you just need to edit the times in a list and run the file. Here is the script below:<br>
       <blockquote>
       <code>
-(define (time-to-minutes hours minutes)<br>
-&nbsp; &nbsp;(+ (* 60 hours) minutes))<br>
-<br>
-(define (second-items lst)<br>
-&nbsp; &nbsp;(map cadr lst))<br>
-<br>
-(define (first-items lst)<br>
-&nbsp; &nbsp;(map car lst))<br>
-<br>
 (define (hours-to-minutes hours)<br>
-  &nbsp; &nbsp;(* (apply + (first-items hours)) 60))<br>
+  &nbsp; &nbsp;(* (apply + (map car hours)) 60))<br>
 <br>
 (define (total-minutes minutes)<br>
-&nbsp; &nbsp;(apply + (second-items minutes)))<br>
+&nbsp; &nbsp;(apply + (map cadr minutes)))<br>
 <br>
 (define (total-time lst)<br>
 &nbsp; &nbsp;(/ (+ (hours-to-minutes lst)(total-minutes lst)) 60.0))<br>
@@ -41,14 +32,14 @@
 (print (total-time<br>
        &nbsp; &nbsp;'((7 57)  ; 7:57 = 7 57, just replace : with a space<br>
        &nbsp; &nbsp;&nbsp;(7 55)<br>
-       &nbsp; &nbsp;&nbsp(8 3)<br>
-       &nbsp; &nbsp;&nbsp(8 25)<br>
-       &nbsp; &nbsp;&nbsp(7 49)<br>
-       &nbsp; &nbsp;&nbsp(7 59)<br>
-       &nbsp; &nbsp;&nbsp(8 3)<br>
-       &nbsp; &nbsp;&nbsp(8 48)<br>
-       &nbsp; &nbsp;&nbsp(8 9)<br>
-       &nbsp; &nbsp;&nbsp(7 56))))<br>
+       &nbsp; &nbsp;&nbsp;(8 3)<br>
+       &nbsp; &nbsp;&nbsp;(8 25)<br>
+       &nbsp; &nbsp;&nbsp;(7 49)<br>
+       &nbsp; &nbsp;&nbsp;(7 59)<br>
+       &nbsp; &nbsp;&nbsp;(8 3)<br>
+       &nbsp; &nbsp;&nbsp;(8 48)<br>
+       &nbsp; &nbsp;&nbsp;(8 9)<br>
+       &nbsp; &nbsp;&nbsp;(7 56))))<br>
       </code>
       </blockquote>
       Now all the user needs to do is edit the times in the list, and run: <code>csi -s timesheet.scm</code> and the total time will be returned. The above examples prints: <code>Total Hours: 81.0666666666667</code>. I was a bit over on this pay period, but now I can see the toal hours so this was a success! Well as Dave Chappelle once said, <a href="https://www.youtube.com/watch?v=5QOgLFFmTFw">"Zip it up and zip it out!"</a>
